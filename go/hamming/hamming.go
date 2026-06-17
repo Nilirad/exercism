@@ -24,7 +24,7 @@ func Distance(a, b string) (int, error) {
 		}
 
 		if a[i] != b[i] {
-			distance += 1
+			distance++
 		}
 	}
 
