@@ -1,15 +1,11 @@
-// This is a "stub" file.  It's a little start on your solution.
-// It's not a complete solution though; you have to write some code.
-
-// Package leap should have a package comment that summarizes what it's about.
-// https://golang.org/doc/effective_go.html#commentary
+// Utilities for calculating leap years.
 package leap
 
-// IsLeapYear should have a comment documenting it.
+// Checks whether `year` is a leap year.
 func IsLeapYear(year int) bool {
-	// Write some code here to pass the test suite.
-	// Then remove all the stock comments.
-	// They're here to help you get started but they only clutter a finished solution.
-	// If you leave them in, reviewers may protest!
-	panic("Please implement the IsLeapYear function")
+	period4 := year%4 == 0
+	period100 := year%100 == 0
+	period400 := year%400 == 0
+
+	return period400 || (period4 && !period100)
 }
