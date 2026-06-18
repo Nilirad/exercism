@@ -15,14 +15,14 @@ const (
 func Score(x, y float64) int {
 	distance := math.Sqrt(x*x + y*y)
 
-	if distance <= smallCircle {
+	switch {
+	case distance <= smallCircle:
 		return smallCirclePoints
-	}
-	if distance <= mediumCircle {
+	case distance <= mediumCircle:
 		return mediumCirclePoints
-	}
-	if distance <= bigCircle {
+	case distance <= bigCircle:
 		return bigCirclePoints
+	default:
+		return missPoints
 	}
-	return missPoints
 }
