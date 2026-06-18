@@ -1,32 +1,27 @@
 package luhn
 
-import "strings"
-
 func Valid(id string) bool {
-	id = strings.ReplaceAll(id, " ", "")
-	if len(id) <= 1 {
-		return false
-	}
+	var sum, count uint
 
-	sum := 0
-
-	mustDouble := len(id)%2 == 0
-	for i := range len(id) {
-		if id[i] < '0' || id[i] > '9' {
+	for i := len(id) - 1; i >= 0; i-- {
+		char := id[i]
+		switch {
+		case char == ' ':
+			continue
+		case char >= '0' && char <= '9':
+			digit := uint(char - '0')
+			if count&1 == 1 {
+				digit *= 2
+				if digit > 9 {
+					digit -= 9
+				}
+			}
+			sum += digit
+			count++
+		default:
 			return false
 		}
-
-		n := int(id[i] - '0')
-		if mustDouble {
-			n *= 2
-			if n > 9 {
-				n -= 9
-			}
-		}
-
-		sum += n
-		mustDouble = !mustDouble
 	}
 
-	return sum%10 == 0
+	return count > 1 && sum%10 == 0
 }
