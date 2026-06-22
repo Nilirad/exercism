@@ -3,45 +3,35 @@ package phonenumber
 import (
 	"errors"
 	"fmt"
-	"strings"
 )
 
 func Number(phoneNumber string) (string, error) {
-	var formatted strings.Builder
-	processed := 0
-	prefixProcessed := false
-
+	digits := make([]byte, 0, 11)
 	for i := range len(phoneNumber) {
 		char := phoneNumber[i]
-		switch {
-		case char == '+' || char == ' ' || char == '-' || char == '(' || char == ')' || char == '.':
-			continue
-
-		case processed == 0 || processed == 3:
-			if char < '2' || char > '9' {
-				// Prefix detection
-				if !prefixProcessed && processed == 0 && char == '1' {
-					prefixProcessed = true
-					continue
-				}
-				return "", errors.New("Invalid digit")
-			}
-			formatted.WriteByte(char)
-			processed++
-
-		case char >= '0' && char <= '9':
-			formatted.WriteByte(char)
-			processed++
-
-		default:
-			return "", errors.New("Invalid digit")
+		if char >= '0' && char <= '9' {
+			digits = append(digits, char)
+		} else if invalidSpecialCharacter(char) {
+			return "", errors.New("Invalid character")
 		}
 	}
 
-	if processed == 10 {
-		return formatted.String(), nil
+	if len(digits) == 11 {
+		if digits[0] != '1' {
+			return "", errors.New("Invalid country code")
+		}
+		digits = digits[1:]
 	}
-	return "", errors.New("Incorrect number length.")
+
+	if len(digits) != 10 {
+		return "", errors.New("Incorrect length")
+	}
+
+	if digits[0] < '2' || digits[3] < '2' {
+		return "", errors.New("Invalid area or exchange code")
+	}
+
+	return string(digits), nil
 }
 
 func AreaCode(phoneNumber string) (string, error) {
@@ -64,4 +54,8 @@ func Format(phoneNumber string) (string, error) {
 	secondChunk := number[6:10]
 
 	return fmt.Sprintf("(%s) %s-%s", areaCode, firstChunk, secondChunk), nil
+}
+
+func invalidSpecialCharacter(char byte) bool {
+	return char != '+' && char != ' ' && char != '-' && char != '(' && char != ')' && char != '.'
 }
