@@ -21,6 +21,7 @@
             gopls           # The official Go language server
             gotools         # Essential utilities (like goimports)
             golangci-lint   # The paradigmatic linter for Go codebases
+            delve           # Go debugger
           ];
 
           shellHook = ''
