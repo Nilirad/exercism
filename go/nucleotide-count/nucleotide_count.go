@@ -7,15 +7,6 @@ import (
 // Histogram is a mapping from nucleotide to its count in given DNA.
 type Histogram map[byte]int
 
-func NewHistogram() Histogram {
-	return Histogram{
-		'A': 0,
-		'C': 0,
-		'G': 0,
-		'T': 0,
-	}
-}
-
 // DNA is a list of nucleotides. Choose a suitable data type.
 type DNA string
 
