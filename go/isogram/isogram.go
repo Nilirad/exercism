@@ -1,32 +1,27 @@
 package isogram
 
 func IsIsogram(word string) bool {
+	var seen [26]bool
+
 	for i := range len(word) {
 		charA := word[i]
-		charA, isAlpha := validateAndNormalize(charA)
+		index, isAlpha := validateAndNormalize(charA)
 		if !isAlpha {
 			continue
 		}
 
-		for j := i + 1; j < len(word); j++ {
-			charB := word[j]
-			charB, isAlpha = validateAndNormalize(charB)
-			if !isAlpha {
-				continue
-			}
-
-			if charA == charB {
-				return false
-			}
+		if seen[index] {
+			return false
 		}
+		seen[index] = true
 	}
 
 	return true
 }
 
 // validateAndNormalize ensures the byte is an ASCII letter
-// and converts it to lowercase.
-func validateAndNormalize(c byte) (byte, bool) {
+// and converts it to an alphabet index.
+func validateAndNormalize(c byte) (int, bool) {
 	if c >= 'A' && c <= 'Z' {
 		c += 'a' - 'A'
 	}
@@ -34,5 +29,5 @@ func validateAndNormalize(c byte) (byte, bool) {
 		return 0, false
 	}
 
-	return c, true
+	return int(c - 'a'), true
 }
