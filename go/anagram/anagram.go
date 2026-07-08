@@ -1,32 +1,44 @@
 package anagram
 
 import (
-	"maps"
+	"slices"
 	"strings"
+	"unicode"
+	"unicode/utf8"
 )
 
-func getComposition(s string) map[rune]int {
-	composition := make(map[rune]int)
-	for _, r := range s {
-		composition[r]++
-	}
-
-	return composition
-}
-
+// Detect returns the candidates that are anagrams of subject.
 func Detect(subject string, candidates []string) []string {
-	subjectLower := strings.ToLower(subject)
-	subjectComposition := getComposition(subjectLower)
+	subjectRuneCount := utf8.RuneCountInString(subject)
+
+	// Convert subject to lowercase runes and sort them
+	subjectRunes := make([]rune, 0, subjectRuneCount)
+	for _, r := range subject {
+		subjectRunes = append(subjectRunes, unicode.ToLower(r))
+	}
+	slices.Sort(subjectRunes)
+
+	// Pre-allocate a buffer for candidate runes to avoid allocations in the loop
+	candidateRunesBuf := make([]rune, subjectRuneCount)
 
 	var anagrams []string
 	for _, candidate := range candidates {
-		candidateLower := strings.ToLower(candidate)
-		if subjectLower == candidateLower {
+		if strings.EqualFold(subject, candidate) {
 			continue
 		}
 
-		candidateComposition := getComposition(candidateLower)
-		if maps.Equal(subjectComposition, candidateComposition) {
+		if utf8.RuneCountInString(candidate) != subjectRuneCount {
+			continue
+		}
+
+		candidateRunes := candidateRunesBuf[:0]
+		for _, r := range candidate {
+			candidateRunes = append(candidateRunes, unicode.ToLower(r))
+		}
+
+		slices.Sort(candidateRunes)
+
+		if slices.Equal(subjectRunes, candidateRunes) {
 			anagrams = append(anagrams, candidate)
 		}
 	}
